@@ -25,6 +25,7 @@
   "dependencies": {
     "@adonisjs/core": "^5.1.0",
     "@adonisjs/lucid": "^15.0.3",
+    "@adonisjs/redis": "^7.0.8",
     "@adonisjs/repl": "^3.0.0",
     "luxon": "^2.0.2",
     "pg": "^8.7.1",
