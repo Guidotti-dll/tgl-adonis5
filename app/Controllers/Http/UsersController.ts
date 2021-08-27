@@ -1,3 +1,5 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
+import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
@@ -14,6 +16,17 @@ export default class UsersController {
     try {
       const data = await request.validate(StoreUserValidator)
       const user = await User.create(data)
+
+      Mail.sendLater((message) => {
+        message
+          .from('tgl@email.com')
+          .to(user.email)
+          .subject('Welcome')
+          .htmlView('emails/confirmation_account', {
+            name: user.name,
+            link: `${Env.get('APP_URL')}/confirm-account/${user.id}`,
+          })
+      })
 
       return user
     } catch (error) {

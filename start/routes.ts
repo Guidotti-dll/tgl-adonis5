@@ -21,8 +21,12 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.post('users', 'UsersController.store')
+
 Route.post('forgot-password', 'ForgotPasswordsController.store')
 Route.patch('reset-password/:token', 'ForgotPasswordsController.update')
+
+Route.get('confirm-account/:id', 'SessionsController.confirmAccount')
+
 Route.group(() => {
   Route.resource('users', 'UserController').apiOnly().only(['show', 'destroy', 'update'])
 }).middleware('auth')

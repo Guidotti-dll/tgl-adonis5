@@ -20,6 +20,8 @@ export default Env.rules({
   APP_KEY: Env.schema.string(),
   APP_NAME: Env.schema.string(),
   NODE_ENV: Env.schema.enum(['development', 'production', 'testing'] as const),
+  FRONT_URL: Env.schema.string(),
+  APP_URL: Env.schema.string(),
   PG_HOST: Env.schema.string({ format: 'host' }),
   PG_PORT: Env.schema.number(),
   PG_USER: Env.schema.string(),
