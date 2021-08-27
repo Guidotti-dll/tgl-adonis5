@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+}
+.header {
+  height: 75.5px;
+  width: 100%;
+  color: #707070;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #ebebeb;
+  font-size: 20px;
+  font-weight: bold;
+  font-style: italic;
+  padding-left: 20px;
+}
+
+.header h1 {
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  margin-right: 20px;
+}
+
+.header h1:last-child {
+  padding-left: 15px;
+}
+
+.header h1::before {
+  position: absolute;
+  bottom: -25px;
+  content: "";
+  width: 70px;
+  height: 7px;
+  background: #b5c401;
+  border-radius: 6px;
+}
+.layout {
+  height: calc(100vh - 155px);
+  display: flex;
+}
+.sidebar {
+  height: 100%;
+  background: rgba(156, 39, 176, 0.2);
+  width: 250px;
+}
+main {
+  overflow-y: scroll;
+  padding: 10px;
+  height: 100%;
+  background: #f7f7f7;
+  font-size: 18px;
+  flex: 1;
+}
+.footer {
+  width: 100%;
+  min-height: 79.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  border: 2px solid #ebebeb;
+}
+  </style>
+</head>
+<body>
+  @include('partials/header')
+
+  <section class="layout">
+    <main>
+      @!section('main')
+    </main>
+  </section>
+
+  @include('partials/footer')
+</body>
+</html>
