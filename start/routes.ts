@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+Route.post('users', 'UsersController.store')
+Route.group(() => {
+  Route.resource('users', 'UserController').apiOnly().only(['show', 'destroy', 'update'])
+}).middleware('auth')
