@@ -8,12 +8,12 @@ export default class UsersSchema extends BaseSchema {
       table.increments('id').primary()
       table.string('name', 80).notNullable()
       table.string('email', 254).notNullable().unique()
-      table.string('password', 60).notNullable()
+      table.string('password').notNullable()
       table.boolean('is_confirmed').defaultTo(false)
       table.string('reset_token')
       table.timestamp('token_created_at')
-      table.timestamp('created_at', { useTz: true }).notNullable()
-      table.timestamp('updated_at', { useTz: true }).notNullable()
+      table.timestamp('created_at', { useTz: true })
+      table.timestamp('updated_at', { useTz: true })
     })
   }
 
