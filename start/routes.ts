@@ -26,6 +26,7 @@ Route.post('forgot-password', 'ForgotPasswordsController.store')
 Route.patch('reset-password/:token', 'ForgotPasswordsController.update')
 
 Route.get('confirm-account/:id', 'SessionsController.confirmAccount')
+Route.post('sessions', 'SessionsController.store')
 
 Route.group(() => {
   Route.resource('users', 'UserController').apiOnly().only(['show', 'destroy', 'update'])

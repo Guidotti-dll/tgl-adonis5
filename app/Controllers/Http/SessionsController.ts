@@ -1,8 +1,19 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
+import StoreSessionValidator from 'App/Validators/StoreSessionValidator'
 
 export default class SessionsController {
-  public async store({}: HttpContextContract) {}
+  public async store({ request, response, auth }: HttpContextContract) {
+    const { email, password } = await request.validate(StoreSessionValidator)
+    try {
+      const { user, token } = await auth
+        .use('api')
+        .attempt(email, password, { expiresIn: '60mins' })
+      return { user, token }
+    } catch {
+      return response.badRequest({ error: { message: 'Invalid credentials' } })
+    }
+  }
 
   public async confirmAccount({ params, response }: HttpContextContract) {
     try {
