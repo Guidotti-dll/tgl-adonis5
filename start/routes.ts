@@ -29,5 +29,11 @@ Route.get('confirm-account/:id', 'SessionsController.confirmAccount')
 Route.post('sessions', 'SessionsController.store')
 
 Route.group(() => {
-  Route.resource('users', 'UserController').apiOnly().only(['show', 'destroy', 'update'])
+  Route.resource('users', 'UsersController').apiOnly().only(['show', 'destroy', 'update'])
 }).middleware('auth')
+
+Route.group(() => {
+  Route.resource('roles', 'RolesController').apiOnly()
+})
+  .middleware('auth')
+  .prefix('admin')

@@ -24,12 +24,21 @@ services:
   migration:
     build: .
     # restart: always
-    image: tgl
+    image: migration
     networks:
       - adonis5
     command: node ace migration:run
     depends_on:
       - postgres
+
+  seeds:
+    build: .
+    image: seeds
+    networks:
+      - adonis5
+    command: node ace db:seed
+    depends_on:
+      - migration
 
   postgres:
     image: postgres
