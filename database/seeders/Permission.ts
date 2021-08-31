@@ -9,8 +9,8 @@ export default class PermissionSeeder extends BaseSeeder {
         slug: 'user-index',
       },
       {
-        name: 'postUser',
-        slug: 'user-post',
+        name: 'storeUser',
+        slug: 'user-store',
       },
       {
         name: 'showUser',
@@ -23,6 +23,46 @@ export default class PermissionSeeder extends BaseSeeder {
       {
         name: 'destroyUser',
         slug: 'user-destroy',
+      },
+      {
+        name: 'indexRole',
+        slug: 'role-index',
+      },
+      {
+        name: 'storeRole',
+        slug: 'role-store',
+      },
+      {
+        name: 'showRole',
+        slug: 'role-show',
+      },
+      {
+        name: 'updateRole',
+        slug: 'role-update',
+      },
+      {
+        name: 'destroyRole',
+        slug: 'role-destroy',
+      },
+      {
+        name: 'indexPermission',
+        slug: 'permission-index',
+      },
+      {
+        name: 'storePermission',
+        slug: 'permission-store',
+      },
+      {
+        name: 'showPermission',
+        slug: 'permission-show',
+      },
+      {
+        name: 'updatePermission',
+        slug: 'permission-update',
+      },
+      {
+        name: 'destroyPermission',
+        slug: 'permission-destroy',
       },
     ])
   }
