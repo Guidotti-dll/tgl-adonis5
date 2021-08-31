@@ -5,7 +5,8 @@ import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 
 export default class UsersController {
-  public async index({ request }: HttpContextContract) {
+  public async index({ request, bouncer }: HttpContextContract) {
+    await bouncer.authorize('Can', 'user-index')
     const { page, perPage } = request.qs()
     const users = await User.query().paginate(page, perPage)
 
@@ -16,6 +17,7 @@ export default class UsersController {
     try {
       const data = await request.validate(StoreUserValidator)
       const user = await User.create(data)
+      await user.related('roles').attach([1])
 
       Mail.sendLater((message) => {
         message
