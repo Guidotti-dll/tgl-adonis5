@@ -35,6 +35,7 @@ Route.group(() => {
 Route.group(() => {
   Route.resource('roles', 'RolesController').apiOnly()
   Route.put('roles', 'RolesController.attach')
+  Route.resource('permissions', 'PermissionsController').apiOnly()
 })
   .middleware('auth')
   .prefix('admin')
