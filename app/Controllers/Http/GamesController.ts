@@ -31,7 +31,26 @@ export default class GamesController {
     return game
   }
 
-  public async update({}: HttpContextContract) {}
+  public async update({ params, request, response }: HttpContextContract) {
+    const game = await Game.findBy('id', params.id)
+    const data = request.only([
+      'type',
+      'description',
+      'range',
+      'price',
+      'color',
+      'max-number',
+      'min-cart-value',
+    ])
+
+    if (!game) {
+      return response.status(404).send({ error: { message: 'Game not found' } })
+    }
+
+    await game.merge(data)
+    await game.save()
+    return game
+  }
 
   public async destroy({ response, params }: HttpContextContract) {
     const game = await Game.findBy('id', params.id)
