@@ -13,7 +13,9 @@ export default class AdminSeeder extends BaseSeeder {
         is_confirmed: true,
       })
       const adminRole = await Role.findBy('slug', 'admin')
-      await user.related('roles').attach([adminRole!.id])
+      if (adminRole) {
+        await user.related('roles').attach([adminRole.id])
+      }
     }
   }
 }

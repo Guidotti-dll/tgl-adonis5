@@ -1,6 +1,7 @@
 import Mail from '@ioc:Adonis/Addons/Mail'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Role from 'App/Models/Role'
 import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 
@@ -16,7 +17,10 @@ export default class UsersController {
     try {
       const data = await request.validate(StoreUserValidator)
       const user = await User.create(data)
-      await user.related('roles').attach([1])
+      const role = await Role.findBy('slug', 'user')
+      if (role) {
+        await user.related('roles').attach([role.id])
+      }
 
       Mail.sendLater((message) => {
         message
