@@ -33,4 +33,5 @@ Route.group(() => {
   Route.resource('roles', 'RolesController').apiOnly()
   Route.put('roles', 'RolesController.attach')
   Route.resource('permissions', 'PermissionsController').apiOnly()
+  Route.resource('games', 'GamesController').apiOnly()
 }).middleware(['auth', 'can'])
