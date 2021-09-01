@@ -39,8 +39,8 @@ export default class GamesController {
       'range',
       'price',
       'color',
-      'max-number',
-      'min-cart-value',
+      'max_number',
+      'min_cart_value',
     ])
 
     if (!game) {
