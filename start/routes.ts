@@ -29,13 +29,14 @@ Route.get('confirm-account/:id', 'SessionsController.confirmAccount')
 Route.post('sessions', 'SessionsController.store')
 
 Route.group(() => {
-  Route.resource('users', 'UsersController').apiOnly().only(['show', 'destroy', 'update'])
+  Route.resource('users', 'UsersController').apiOnly().except(['store'])
 }).middleware('auth')
 
 Route.group(() => {
-  Route.resource('roles', 'RolesController').apiOnly()
+  Route.resource('users', 'UsersController').apiOnly().as('admin.user')
+  Route.resource('roles', 'RolesController').apiOnly().as('admin.roles')
   Route.put('roles', 'RolesController.attach')
-  Route.resource('permissions', 'PermissionsController').apiOnly()
+  Route.resource('permissions', 'PermissionsController').apiOnly().as('admin.permissions')
 })
   .middleware('auth')
   .prefix('admin')
