@@ -21,15 +21,15 @@ export default class Game extends BaseModel {
   public 'color': string
 
   @column()
-  public 'max-number': number
+  public 'max_number': number
 
   @column()
-  public 'min-cart-value': number
+  public 'min_cart_value': number
 
   @column()
   @column.dateTime({ autoCreate: true })
-  public 'created-at': DateTime
+  public 'created_at': DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public 'updated-at': DateTime
+  public 'updated_at': DateTime
 }
