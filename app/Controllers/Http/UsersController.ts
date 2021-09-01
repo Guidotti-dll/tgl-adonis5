@@ -5,8 +5,7 @@ import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 
 export default class UsersController {
-  public async index({ request, bouncer }: HttpContextContract) {
-    await bouncer.authorize('Can', 'user-index')
+  public async index({ request }: HttpContextContract) {
     const { page, perPage } = request.qs()
     const users = await User.query().paginate(page, perPage)
 
@@ -36,8 +35,7 @@ export default class UsersController {
     }
   }
 
-  public async show({ params, response, auth, bouncer }: HttpContextContract) {
-    await bouncer.authorize('Can', 'user-show')
+  public async show({ params, response, auth }: HttpContextContract) {
     const user = await User.findBy('id', params.id)
 
     if (!user) {
@@ -51,8 +49,7 @@ export default class UsersController {
     return user
   }
 
-  public async update({ request, params, auth, response, bouncer }: HttpContextContract) {
-    await bouncer.authorize('Can', 'user-update')
+  public async update({ request, params, auth, response }: HttpContextContract) {
     const user = await User.findByOrFail('id', params.id)
     const data = await request.only(['username', 'email'])
 
@@ -67,8 +64,7 @@ export default class UsersController {
     return user
   }
 
-  public async destroy({ params, response, auth, bouncer }: HttpContextContract) {
-    await bouncer.authorize('Can', 'user-destroy')
+  public async destroy({ params, response, auth }: HttpContextContract) {
     const user = await User.findBy('id', params.id)
 
     if (!user) {

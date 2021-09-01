@@ -30,13 +30,7 @@ Route.post('sessions', 'SessionsController.store')
 
 Route.group(() => {
   Route.resource('users', 'UsersController').apiOnly().except(['store'])
-}).middleware('auth')
-
-Route.group(() => {
-  Route.resource('users', 'UsersController').apiOnly().as('admin.user')
-  Route.resource('roles', 'RolesController').apiOnly().as('admin.roles')
+  Route.resource('roles', 'RolesController').apiOnly()
   Route.put('roles', 'RolesController.attach')
-  Route.resource('permissions', 'PermissionsController').apiOnly().as('admin.permissions')
-})
-  .middleware('auth')
-  .prefix('admin')
+  Route.resource('permissions', 'PermissionsController').apiOnly()
+}).middleware(['auth', 'can'])

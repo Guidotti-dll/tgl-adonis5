@@ -33,11 +33,6 @@ export default class ExceptionHandler extends HttpExceptionHandler {
         .status(401)
         .send({ message: 'You must be logged in to access this route' })
     }
-    if (error.code === 'E_AUTHORIZATION_FAILURE') {
-      return ctx.response
-        .status(403)
-        .send({ message: "You don't have permission to access this route" })
-    }
 
     return super.handle(error, ctx)
   }
