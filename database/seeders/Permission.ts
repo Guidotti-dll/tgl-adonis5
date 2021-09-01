@@ -8,63 +8,63 @@ export default class PermissionSeeder extends BaseSeeder {
       await Permission.createMany([
         {
           name: 'indexUser',
-          slug: 'user-index',
+          slug: 'users-index',
         },
         {
           name: 'storeUser',
-          slug: 'user-store',
+          slug: 'users-store',
         },
         {
           name: 'showUser',
-          slug: 'user-show',
+          slug: 'users-show',
         },
         {
           name: 'updateUser',
-          slug: 'user-update',
+          slug: 'users-update',
         },
         {
           name: 'destroyUser',
-          slug: 'user-destroy',
+          slug: 'users-destroy',
         },
         {
           name: 'indexRole',
-          slug: 'role-index',
+          slug: 'roles-index',
         },
         {
           name: 'storeRole',
-          slug: 'role-store',
+          slug: 'roles-store',
         },
         {
           name: 'showRole',
-          slug: 'role-show',
+          slug: 'roles-show',
         },
         {
           name: 'updateRole',
-          slug: 'role-update',
+          slug: 'roles-update',
         },
         {
           name: 'destroyRole',
-          slug: 'role-destroy',
+          slug: 'roles-destroy',
         },
         {
           name: 'indexPermission',
-          slug: 'permission-index',
+          slug: 'permissions-index',
         },
         {
           name: 'storePermission',
-          slug: 'permission-store',
+          slug: 'permissions-store',
         },
         {
           name: 'showPermission',
-          slug: 'permission-show',
+          slug: 'permissions-show',
         },
         {
           name: 'updatePermission',
-          slug: 'permission-update',
+          slug: 'permissions-update',
         },
         {
           name: 'destroyPermission',
-          slug: 'permission-destroy',
+          slug: 'permissions-destroy',
         },
       ])
     }
