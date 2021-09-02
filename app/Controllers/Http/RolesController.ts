@@ -34,8 +34,14 @@ export default class RolesController {
 
   public async store({ request, response }: HttpContextContract) {
     const data = await request.validate(StoreRoleValidator)
+    const { permissions } = await request.only(['permissions'])
     try {
       const role = await Role.create(data)
+
+      if (permissions && permissions.length > 0) {
+        await role.related('permissions').attach(permissions)
+        await role.load('permissions')
+      }
 
       return role
     } catch (error) {
@@ -54,12 +60,25 @@ export default class RolesController {
   public async update({ request, response, params }: HttpContextContract) {
     try {
       const data = await request.only(['name', 'slug'])
+      const { permissions } = await request.only(['permissions'])
       const role = await Role.findBy('id', params.id)
       if (!role) {
         return response.status(404).send({ error: { message: 'Role not found' } })
       }
-
       role.merge(data)
+
+      if (permissions && permissions.length > 0) {
+        permissions.forEach(async (permission) => {
+          const has = role.permissions.some((rolePermission) => rolePermission.id === permission.id)
+          if (has) {
+            await role.related('permissions').detach(permission)
+          } else {
+            await role?.related('permissions').attach(permission)
+          }
+        })
+
+        await role.load('permissions')
+      }
 
       await role.save()
     } catch (error) {

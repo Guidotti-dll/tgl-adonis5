@@ -26,7 +26,6 @@ export default class Game extends BaseModel {
   @column()
   public 'min_cart_value': number
 
-  @column()
   @column.dateTime({ autoCreate: true })
   public 'created_at': DateTime
 
