@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node ace build --production",
     "start": "node server.js",
+    "docker:migrate": "docker exec -it tgl node ace migration:run",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
