@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Bet from './Bet'
 
 export default class Game extends BaseModel {
   @column({ isPrimary: true })
@@ -31,4 +32,7 @@ export default class Game extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public 'updated_at': DateTime
+
+  @hasMany(() => Bet)
+  public 'bets': HasMany<typeof Bet>
 }

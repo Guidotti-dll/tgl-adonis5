@@ -1,7 +1,16 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  column,
+  beforeSave,
+  BaseModel,
+  manyToMany,
+  ManyToMany,
+  hasMany,
+  HasMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
+import Bet from './Bet'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -47,4 +56,7 @@ export default class User extends BaseModel {
     },
   })
   public roles: ManyToMany<typeof Role>
+
+  @hasMany(() => Bet)
+  public bets: HasMany<typeof Bet>
 }
