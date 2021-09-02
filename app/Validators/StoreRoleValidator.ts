@@ -7,11 +7,12 @@ export default class StoreRoleValidator {
   public schema = schema.create({
     name: schema.string({}, [rules.required()]),
     slug: schema.string({}, [rules.required(), rules.unique({ table: 'roles', column: 'slug' })]),
-    permissions: schema.array().members(schema.number()),
+    permissions: schema.array.optional([rules.minLength(1)]).members(schema.number()),
   })
 
   public messages = {
     required: 'The {{ field }} is required',
     unique: 'The {{ field }} not available',
+    minLength: 'The {{field}} should not be less than {{options.minLength}}',
   }
 }

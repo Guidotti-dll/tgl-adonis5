@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Game from 'App/Models/Game'
 import StoreGameValidator from 'App/Validators/StoreGameValidator'
+import UpdateGameValidator from 'App/Validators/UpdateGameValidator'
 
 export default class GamesController {
   public async index({ request }: HttpContextContract) {
@@ -33,15 +34,7 @@ export default class GamesController {
 
   public async update({ params, request, response }: HttpContextContract) {
     const game = await Game.findBy('id', params.id)
-    const data = request.only([
-      'type',
-      'description',
-      'range',
-      'price',
-      'color',
-      'max_number',
-      'min_cart_value',
-    ])
+    const data = await request.validate(UpdateGameValidator)
 
     if (!game) {
       return response.status(404).send({ error: { message: 'Game not found' } })

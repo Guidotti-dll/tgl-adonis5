@@ -4,6 +4,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Role from 'App/Models/Role'
 import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
+import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 
 export default class UsersController {
   public async index({ request }: HttpContextContract) {
@@ -55,7 +56,7 @@ export default class UsersController {
 
   public async update({ request, params, auth, response }: HttpContextContract) {
     const user = await User.findByOrFail('id', params.id)
-    const data = await request.only(['username', 'email'])
+    const data = await request.validate(UpdateUserValidator)
 
     if (user.id !== auth.user!.id && auth.user?.roles[0].slug !== 'admin') {
       return response
@@ -63,7 +64,9 @@ export default class UsersController {
         .send({ error: { message: 'You can only update your own account' } })
     }
 
-    await user.merge(data).save()
+    user.merge(data)
+
+    await user.save()
 
     return user
   }
