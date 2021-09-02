@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Role from 'App/Models/Role'
 import StoreRoleValidator from 'App/Validators/StoreRoleValidator'
+import UpdateRoleValidator from 'App/Validators/UpdateRoleValidator'
 
 export default class RolesController {
   // public async attach({ request, response }: HttpContextContract) {
@@ -57,22 +58,24 @@ export default class RolesController {
   }
 
   public async update({ request, response, params }: HttpContextContract) {
+    const { name, slug, permissions } = await request.validate(UpdateRoleValidator)
     try {
-      const data = await request.only(['name', 'slug'])
-      const { permissions } = await request.only(['permissions'])
       const role = await Role.findBy('id', params.id)
       if (!role) {
         return response.status(404).send({ error: { message: 'Role not found' } })
       }
-      role.merge(data)
+      role.merge({
+        name,
+        slug,
+      })
 
       if (permissions && permissions.length > 0) {
         permissions.forEach(async (permission) => {
-          const has = role.permissions.some((rolePermission) => rolePermission.id === permission.id)
-          if (has) {
-            await role.related('permissions').detach(permission)
+          const has = role.permissions.some((rolePermission) => rolePermission.id === permission)
+          if (!has) {
+            await role?.related('permissions').attach([permission])
           } else {
-            await role?.related('permissions').attach(permission)
+            await role.related('permissions').detach([permission])
           }
         })
 

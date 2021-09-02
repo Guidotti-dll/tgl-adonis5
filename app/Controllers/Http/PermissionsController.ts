@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Permission from 'App/Models/Permission'
-import StoreRoleValidator from 'App/Validators/StoreRoleValidator'
+import StorePermissionValidator from 'App/Validators/StorePermissionValidator'
+import UpdatePermissionValidator from 'App/Validators/UpdatePermissionValidator'
 
 export default class PermissionsController {
   public async index({ request }: HttpContextContract) {
@@ -11,7 +12,7 @@ export default class PermissionsController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const data = await request.validate(StoreRoleValidator)
+    const data = await request.validate(StorePermissionValidator)
     try {
       const permission = await Permission.create(data)
 
@@ -24,17 +25,17 @@ export default class PermissionsController {
   public async show({ params, response }: HttpContextContract) {
     const permission = await Permission.findBy('id', params.id)
     if (!permission) {
-      return response.status(404).send({ error: { message: 'Role not found' } })
+      return response.status(404).send({ error: { message: 'Permission not found' } })
     }
     return permission
   }
 
   public async update({ request, response, params }: HttpContextContract) {
+    const data = await request.validate(UpdatePermissionValidator)
     try {
-      const data = await request.only(['name', 'slug'])
       const permission = await Permission.findBy('id', params.id)
       if (!permission) {
-        return response.status(404).send({ error: { message: 'Role not found' } })
+        return response.status(404).send({ error: { message: 'Permission not found' } })
       }
 
       permission.merge(data)
@@ -48,7 +49,7 @@ export default class PermissionsController {
   public async destroy({ response, params }: HttpContextContract) {
     const permission = await Permission.findBy('id', params.id)
     if (!permission) {
-      return response.status(404).send({ error: { message: 'Role not found' } })
+      return response.status(404).send({ error: { message: 'Permission not found' } })
     }
 
     await permission.delete()
