@@ -33,7 +33,6 @@ import User from 'App/Models/User'
 export const { actions } = Bouncer.define('Can', async (user: User, permission: string) => {
   await user.load('roles')
   await user.roles[0].load('permissions')
-  console.log(permission, user)
 
   return user.roles[0].permissions.some((_permission) => _permission.slug === permission)
 })

@@ -3,27 +3,27 @@ import Role from 'App/Models/Role'
 import StoreRoleValidator from 'App/Validators/StoreRoleValidator'
 
 export default class RolesController {
-  public async attach({ request, response }: HttpContextContract) {
-    try {
-      const { permissions } = await request.only(['permissions'])
-      const role = await Role.findBy('slug', 'user')
-      if (!role) {
-        return response.status(404).send({ error: { message: 'Role not found' } })
-      }
-      permissions.forEach(async (permission) => {
-        const has = role.permissions.some((rolePermission) => rolePermission.id === permission.id)
-        if (has) {
-          await role.related('permissions').detach(permission)
-        } else {
-          await role?.related('permissions').attach(permission)
-        }
-      })
-      await role?.load('permissions')
-      return role
-    } catch (error) {
-      response.badRequest({ error: { message: error.message } })
-    }
-  }
+  // public async attach({ request, response }: HttpContextContract) {
+  //   try {
+  //     const { permissions } = await request.only(['permissions'])
+  //     const role = await Role.findBy('slug', 'user')
+  //     if (!role) {
+  //       return response.status(404).send({ error: { message: 'Role not found' } })
+  //     }
+  //     permissions.forEach(async (permission) => {
+  //       const has = role.permissions.some((rolePermission) => rolePermission.id === permission.id)
+  //       if (has) {
+  //         await role.related('permissions').detach(permission)
+  //       } else {
+  //         await role?.related('permissions').attach(permission)
+  //       }
+  //     })
+  //     await role?.load('permissions')
+  //     return role
+  //   } catch (error) {
+  //     response.badRequest({ error: { message: error.message } })
+  //   }
+  // }
 
   public async index({ request }: HttpContextContract) {
     const { page, perPage } = request.qs()
@@ -33,10 +33,9 @@ export default class RolesController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const data = await request.validate(StoreRoleValidator)
-    const { permissions } = await request.only(['permissions'])
+    const { name, slug, permissions } = await request.validate(StoreRoleValidator)
     try {
-      const role = await Role.create(data)
+      const role = await Role.create({ name, slug })
 
       if (permissions && permissions.length > 0) {
         await role.related('permissions').attach(permissions)

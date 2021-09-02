@@ -31,7 +31,7 @@ Route.post('sessions', 'SessionsController.store')
 Route.group(() => {
   Route.resource('users', 'UsersController').apiOnly().except(['store'])
   Route.resource('roles', 'RolesController').apiOnly()
-  Route.put('roles', 'RolesController.attach')
+  // Route.put('roles', 'RolesController.attach')
   Route.resource('permissions', 'PermissionsController').apiOnly()
   Route.resource('games', 'GamesController').apiOnly()
 }).middleware(['auth', 'can'])
