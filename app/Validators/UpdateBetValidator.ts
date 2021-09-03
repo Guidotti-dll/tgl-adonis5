@@ -6,7 +6,9 @@ export default class UpdateBetValidator {
 
   public schema = schema.create({
     game_id: schema.number.optional([rules.exists({ table: 'games', column: 'id' })]),
-    numbers: schema.array.optional([rules.minLength(1)]).members(schema.number([rules.unsigned()])),
+    numbers: schema.array
+      .optional([rules.minLength(1), rules.distinct('*')])
+      .members(schema.number([rules.unsigned()])),
   })
 
   public messages = {
@@ -14,5 +16,6 @@ export default class UpdateBetValidator {
     unsigned: 'The {{field}} should be above {{options.unsigned}}.',
     number: 'The {{field}} should be a STRING.',
     exists: 'The {{field}} does not exist in the game table.',
+    distinct: 'Some {{field}} is repeating itself',
   }
 }

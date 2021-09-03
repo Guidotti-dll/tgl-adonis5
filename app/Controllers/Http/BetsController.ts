@@ -50,6 +50,12 @@ export default class BetsController {
           error: { message: "Some of your bets doesn't have the correct amount of numbers" },
         })
       }
+
+      if (bet.numbers.some((number) => number > game!.range || number < 1)) {
+        return response
+          .status(400)
+          .send({ error: { message: 'Any number is outside the allowed range' } })
+      }
       totalCartPrice += game!.price
       if (minCartValue < game!['min_cart_value']) {
         minCartValue = game!['min_cart_value']
@@ -128,14 +134,21 @@ export default class BetsController {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (
-      !auth.user!.bets.some((userBet) => userBet.id === bet.id) &&
-      auth.user?.roles[0].slug !== 'admin'
-    ) {
+    await bet.load('game')
+
+    const userBets = await Bet.query().where('user_id', auth.user!.id)
+
+    if (userBets.some((userBet) => userBet.id === bet.id) && auth.user?.roles[0].slug !== 'admin') {
       return response.status(401).send({ error: { message: 'You can only update your own bet' } })
     }
 
-    const game = await Game.find(game_id)
+    if (numbers && numbers.some((number) => number > bet.game.range || number < 1)) {
+      return response
+        .status(400)
+        .send({ error: { message: 'Any number is outside the allowed range' } })
+    }
+
+    const game = await Game.find(game_id ? game_id : bet.game_id)
     if (numbers && numbers.length !== game!['max_number']) {
       return response
         .status(400)
@@ -143,12 +156,12 @@ export default class BetsController {
     }
 
     bet.merge({
-      game_id,
+      game_id: game_id ? game_id : bet.game_id,
       price: game!.price,
       numbers: numbers ? numbers.join(',') : bet.numbers,
     })
     await bet.save()
-    return { ...bet.$attributes, color: game!.color }
+    return { ...bet.$attributes, color: game!.color, type: game!.type }
   }
 
   public async destroy({ params, response, auth }: HttpContextContract) {

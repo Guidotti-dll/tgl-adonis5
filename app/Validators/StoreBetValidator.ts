@@ -8,7 +8,9 @@ export default class StoreBetValidator {
     bets: schema.array().members(
       schema.object().members({
         game_id: schema.number([rules.exists({ table: 'games', column: 'id' })]),
-        numbers: schema.array([rules.minLength(1)]).members(schema.number([rules.unsigned()])),
+        numbers: schema
+          .array([rules.minLength(1), rules.distinct('*')])
+          .members(schema.number([rules.unsigned()])),
       })
     ),
   })
@@ -19,5 +21,6 @@ export default class StoreBetValidator {
     unsigned: 'The {{field}} should be above {{options.unsigned}}.',
     number: 'The {{field}} should be a STRING.',
     exists: 'The {{field}} does not exist in the game table.',
+    distinct: 'Some {{field}} is repeating itself',
   }
 }
