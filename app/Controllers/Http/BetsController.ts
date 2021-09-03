@@ -1,5 +1,20 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 import Bet from 'App/Models/Bet'
+import Game from 'App/Models/Game'
+import StoreBetValidator from 'App/Validators/StoreBetValidator'
+import { DateTime } from 'luxon'
+
+interface ReturnBet {
+  id?: number
+  user_id: number
+  game_id: number
+  price: number
+  numbers: string
+  color: string
+  created_at: DateTime
+  updated_at: DateTime
+}
 
 export default class BetsController {
   public async index({ request, auth }: HttpContextContract) {
@@ -17,7 +32,54 @@ export default class BetsController {
     return bets
   }
 
-  public async store({}: HttpContextContract) {}
+  public async store({ request, response, auth }: HttpContextContract) {
+    const { bets } = await request.validate(StoreBetValidator)
+    const newBets: ReturnBet[] = []
+    let minCartValue = 0
+    let totalCartPrice = 0
+
+    const trx = await Database.transaction()
+    for (const bet of bets) {
+      const game = await Game.find(bet.game_id)
+      if (bet.numbers.length !== game!['max_number']) {
+        console.log(bet, game!['max_number'])
+        return response.status(400).send({
+          error: { message: "Some of your bets doesn't have the correct amount of numbers" },
+        })
+      }
+      totalCartPrice += game!.price
+      if (minCartValue < game!['min_cart_value']) {
+        minCartValue = game!['min_cart_value']
+      }
+
+      const data = {
+        game_id: game!.id,
+        user_id: auth.user!.id,
+        price: game!.price,
+        numbers: bet.numbers.join(','),
+      }
+
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { user_id, created_at, updated_at, price, numbers, game_id } = await Bet.create(
+        data,
+        trx
+      )
+
+      newBets.push({ user_id, game_id, created_at, updated_at, price, numbers, color: game!.color })
+    }
+
+    if (totalCartPrice < minCartValue) {
+      return response.status(400).send({
+        error: {
+          message: `The value of your cart is less than the minimum accepted, $${minCartValue} `,
+        },
+      })
+    }
+
+    await trx.commit()
+
+    return newBets
+  }
 
   public async show({ params, response, auth }: HttpContextContract) {
     const bet = await Bet.findBy('id', params.id)

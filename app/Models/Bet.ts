@@ -20,10 +20,10 @@ export default class Bet extends BaseModel {
   public game_id: number
 
   @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  public created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  public updated_at: DateTime
 
   @belongsTo(() => Game, {
     foreignKey: 'game_id',
