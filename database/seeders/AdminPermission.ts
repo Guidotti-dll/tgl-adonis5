@@ -7,7 +7,8 @@ export default class AdminPermissionSeeder extends BaseSeeder {
     const role = await Role.findBy('slug', 'admin')
     const permissions = await (await Permission.all()).map((permission) => permission.id)
 
-    if (role) {
+    await role?.load('permissions')
+    if (role && role.permissions.length === 0) {
       await role?.related('permissions').attach(permissions)
     }
   }
