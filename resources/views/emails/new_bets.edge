@@ -1,0 +1,21 @@
+@layout('layout / layout')
+@section ('main')
+<p>
+    <strong> Betting </strong>
+</p>
+<strong> Hello {{name}} !! </strong>
+<p> Your bets placed on The Greatest Lottery were successful !! </p>
+<p> These were like your bets: </p>
+<ul>
+    @each (bet on bets)
+    <li>
+      <strong
+      style = "color: {{bet.color}}"
+      >
+      {{bet.type}}
+    </strong> - <span> ${{bet.price}} </span>
+    <p> {{bet.numbers}} </p>
+</li>
+@endeach
+</ul>
+@endsection

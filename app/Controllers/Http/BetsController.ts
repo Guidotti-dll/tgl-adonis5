@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import Mail from '@ioc:Adonis/Addons/Mail'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Bet from 'App/Models/Bet'
@@ -14,6 +15,7 @@ interface ReturnBet {
   price: number
   numbers: string
   color: string
+  type: string
   created_at: DateTime
   updated_at: DateTime
 }
@@ -65,7 +67,16 @@ export default class BetsController {
         trx
       )
 
-      newBets.push({ user_id, game_id, created_at, updated_at, price, numbers, color: game!.color })
+      newBets.push({
+        user_id,
+        game_id,
+        created_at,
+        updated_at,
+        price,
+        numbers,
+        color: game!.color,
+        type: game!.type,
+      })
     }
 
     if (totalCartPrice < minCartValue) {
@@ -77,6 +88,17 @@ export default class BetsController {
     }
 
     await trx.commit()
+
+    Mail.sendLater((message) => {
+      message
+        .from('tgl@email.com')
+        .to(auth.user!.email)
+        .subject('New Bet')
+        .htmlView('emails/new_bets', {
+          bets: newBets,
+          name: auth.user!.name,
+        })
+    })
 
     return newBets
   }
@@ -98,12 +120,19 @@ export default class BetsController {
     return bet
   }
 
-  public async update({ response, request, params }: HttpContextContract) {
+  public async update({ response, request, params, auth }: HttpContextContract) {
     const { game_id, numbers } = await request.validate(UpdateBetValidator)
 
     const bet = await Bet.findBy('id', params.id)
     if (!bet) {
       return response.status(404).send({ error: { message: 'Bet not found' } })
+    }
+
+    if (
+      !auth.user!.bets.some((userBet) => userBet.id === bet.id) &&
+      auth.user?.roles[0].slug !== 'admin'
+    ) {
+      return response.status(401).send({ error: { message: 'You can only update your own bet' } })
     }
 
     const game = await Game.find(game_id)
