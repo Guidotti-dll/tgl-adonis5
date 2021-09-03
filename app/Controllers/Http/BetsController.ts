@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Bet from 'App/Models/Bet'
 import Game from 'App/Models/Game'
 import StoreBetValidator from 'App/Validators/StoreBetValidator'
+import UpdateBetValidator from 'App/Validators/UpdateBetValidator'
 import { DateTime } from 'luxon'
 
 interface ReturnBet {
@@ -42,7 +44,6 @@ export default class BetsController {
     for (const bet of bets) {
       const game = await Game.find(bet.game_id)
       if (bet.numbers.length !== game!['max_number']) {
-        console.log(bet, game!['max_number'])
         return response.status(400).send({
           error: { message: "Some of your bets doesn't have the correct amount of numbers" },
         })
@@ -59,7 +60,6 @@ export default class BetsController {
         numbers: bet.numbers.join(','),
       }
 
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { user_id, created_at, updated_at, price, numbers, game_id } = await Bet.create(
         data,
         trx
@@ -98,7 +98,29 @@ export default class BetsController {
     return bet
   }
 
-  public async update({}: HttpContextContract) {}
+  public async update({ response, request, params }: HttpContextContract) {
+    const { game_id, numbers } = await request.validate(UpdateBetValidator)
+
+    const bet = await Bet.findBy('id', params.id)
+    if (!bet) {
+      return response.status(404).send({ error: { message: 'Bet not found' } })
+    }
+
+    const game = await Game.find(game_id)
+    if (numbers && numbers.length !== game!['max_number']) {
+      return response
+        .status(400)
+        .send({ error: { message: "Your bet doesn't have the correct amount of numbers" } })
+    }
+
+    bet.merge({
+      game_id,
+      price: game!.price,
+      numbers: numbers ? numbers.join(',') : bet.numbers,
+    })
+    await bet.save()
+    return { ...bet.$attributes, color: game!.color }
+  }
 
   public async destroy({ params, response, auth }: HttpContextContract) {
     const bet = await Bet.findBy('id', params.id)
