@@ -5,7 +5,7 @@ import Role from 'App/Models/Role'
 export default class AdminPermissionSeeder extends BaseSeeder {
   public async run() {
     const role = await Role.findBy('slug', 'admin')
-    const permissions = await (await Permission.all()).map((permission) => permission.id)
+    const permissions = (await Permission.all()).map((permission) => permission.id)
 
     await role?.load('permissions')
     if (role && role.permissions.length === 0) {

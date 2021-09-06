@@ -110,11 +110,15 @@ export default class BetsController {
     return newBets
   }
 
-  public async show({ params, response }: HttpContextContract) {
+  public async show({ params, response, auth, bouncer }: HttpContextContract) {
     const bet = await Bet.findBy('id', params.id)
 
     if (!bet) {
       return response.status(404).send({ error: { message: 'Bet not found' } })
+    }
+
+    if (auth.user!.id !== bet.user_id && !(await bouncer.allows('Can', 'bets-show-all'))) {
+      return response.status(401).send({ error: { message: 'You can only show your own bet' } })
     }
 
     return bet

@@ -111,6 +111,10 @@ export default class PermissionSeeder extends BaseSeeder {
           slug: 'bets-index-all',
         },
         {
+          name: 'showAllBets',
+          slug: 'bets-show-all',
+        },
+        {
           name: 'showAllUsers',
           slug: 'users-show-all',
         },
