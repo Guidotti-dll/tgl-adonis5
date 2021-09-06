@@ -116,10 +116,7 @@ export default class BetsController {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (
-      !auth.user!.bets.some((userBet) => userBet.id === bet.id) &&
-      auth.user?.roles[0].slug !== 'admin'
-    ) {
+    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
       return response.status(401).send({ error: { message: 'You can only show your own bet' } })
     }
 
@@ -136,9 +133,7 @@ export default class BetsController {
 
     await bet.load('game')
 
-    const userBets = await Bet.query().where('user_id', auth.user!.id)
-
-    if (userBets.some((userBet) => userBet.id === bet.id) && auth.user?.roles[0].slug !== 'admin') {
+    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
       return response.status(401).send({ error: { message: 'You can only update your own bet' } })
     }
 
@@ -171,10 +166,7 @@ export default class BetsController {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (
-      !auth.user!.bets.some((userBet) => userBet.id === bet.id) &&
-      auth.user?.roles[0].slug !== 'admin'
-    ) {
+    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
       return response.status(401).send({ error: { message: 'You can only delete your own bet' } })
     }
     await bet.delete()
