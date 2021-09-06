@@ -106,6 +106,22 @@ export default class PermissionSeeder extends BaseSeeder {
           name: 'destroyBets',
           slug: 'bets-destroy',
         },
+        {
+          name: 'indexAllBets',
+          slug: 'bets-index-all',
+        },
+        {
+          name: 'showAllUsers',
+          slug: 'users-show-all',
+        },
+        {
+          name: 'updateAllUsers',
+          slug: 'users-update-all',
+        },
+        {
+          name: 'destroyAllUsers',
+          slug: 'users-destroy-all',
+        },
       ])
     }
   }

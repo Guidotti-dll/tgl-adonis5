@@ -2,6 +2,7 @@
 import Mail from '@ioc:Adonis/Addons/Mail'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
+import { ModelPaginatorContract } from '@ioc:Adonis/Lucid/Orm'
 import Bet from 'App/Models/Bet'
 import Game from 'App/Models/Game'
 import StoreBetValidator from 'App/Validators/StoreBetValidator'
@@ -21,17 +22,17 @@ interface ReturnBet {
 }
 
 export default class BetsController {
-  public async index({ request, auth }: HttpContextContract) {
+  public async index({ request, auth, bouncer }: HttpContextContract) {
     const { page, perPage } = request.qs()
-
-    if (auth.user!.roles[0].slug !== 'admin') {
-      const bets = await Bet.query().preload('game').paginate(page, perPage)
-      return bets
+    let bets: ModelPaginatorContract<Bet>
+    if (await bouncer.allows('Can', 'bets-index-all')) {
+      bets = await Bet.query().paginate(page, perPage)
+    } else {
+      bets = await Bet.query()
+        .where('user_id', auth.user!.id)
+        .preload('game')
+        .paginate(page, perPage)
     }
-    const bets = await Bet.query()
-      .where('user_id', auth.user!.id)
-      .preload('game')
-      .paginate(page, perPage)
 
     return bets
   }
@@ -109,21 +110,17 @@ export default class BetsController {
     return newBets
   }
 
-  public async show({ params, response, auth }: HttpContextContract) {
+  public async show({ params, response }: HttpContextContract) {
     const bet = await Bet.findBy('id', params.id)
 
     if (!bet) {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
-      return response.status(401).send({ error: { message: 'You can only show your own bet' } })
-    }
-
     return bet
   }
 
-  public async update({ response, request, params, auth }: HttpContextContract) {
+  public async update({ response, request, params }: HttpContextContract) {
     const { game_id, numbers } = await request.validate(UpdateBetValidator)
 
     const bet = await Bet.findBy('id', params.id)
@@ -132,10 +129,6 @@ export default class BetsController {
     }
 
     await bet.load('game')
-
-    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
-      return response.status(401).send({ error: { message: 'You can only update your own bet' } })
-    }
 
     if (numbers && numbers.some((number) => number > bet.game.range || number < 1)) {
       return response
@@ -159,16 +152,13 @@ export default class BetsController {
     return { ...bet.$attributes, color: game!.color, type: game!.type }
   }
 
-  public async destroy({ params, response, auth }: HttpContextContract) {
+  public async destroy({ params, response }: HttpContextContract) {
     const bet = await Bet.findBy('id', params.id)
 
     if (!bet) {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (auth.user!.id !== bet.user_id && auth.user?.roles[0].slug !== 'admin') {
-      return response.status(401).send({ error: { message: 'You can only delete your own bet' } })
-    }
     await bet.delete()
     return response.status(200).send({ deleted: true })
   }
