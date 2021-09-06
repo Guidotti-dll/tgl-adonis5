@@ -6,7 +6,7 @@ export default class PlayerPermissionSeeder extends BaseSeeder {
     const role = await Role.findBy('slug', 'player')
     await role?.load('permissions')
     if (role && role.permissions.length === 0) {
-      await role?.related('permissions').attach([2, 3, 4, 5])
+      await role?.related('permissions').attach([2, 3, 4, 5, 21, 22, 23])
     }
   }
 }
