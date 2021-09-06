@@ -1,20 +1,20 @@
-@layout('layout / layout')
+@layout('layout/layout')
 @section ('main')
 <p>
     <strong> Betting </strong>
 </p>
-<strong> Hello {{name}} !! </strong>
-<p> Your bets placed on The Greatest Lottery were successful !! </p>
+<strong>Hello {{name}} !!</strong>
+<p>Your bets placed on The Greatest Lottery were successful !! </p>
 <p> These were like your bets: </p>
 <ul>
-    @each (bet on bets)
+    @each(bet in bets)
     <li>
       <strong
-      style = "color: {{bet.color}}"
+      style="color:{{bet.color}}"
       >
       {{bet.type}}
-    </strong> - <span> ${{bet.price}} </span>
-    <p> {{bet.numbers}} </p>
+    </strong> - <span>${{bet.price}}</span>
+    <p>{{bet.numbers}}</p>
 </li>
 @endeach
 </ul>
