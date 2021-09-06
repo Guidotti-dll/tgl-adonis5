@@ -54,6 +54,8 @@ export default class RolesController {
       }
 
       await role.save()
+
+      return role
     } catch (error) {
       response.badRequest({ error: { message: error.message } })
     }
