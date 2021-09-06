@@ -40,25 +40,25 @@ export default class UsersController {
     }
   }
 
-  public async show({ params, response, auth }: HttpContextContract) {
+  public async show({ params, response, auth, bouncer }: HttpContextContract) {
     const user = await User.findBy('id', params.id)
 
     if (!user) {
       return response.status(404).send({ error: { message: 'User not found' } })
     }
 
-    if (user.id !== auth.user!.id && auth.user?.roles[0].slug !== 'admin') {
+    if (user.id !== auth.user!.id && !(await bouncer.allows('Can', 'users-show-all'))) {
       return response.status(401).send({ error: { message: 'You can only show your own account' } })
     }
 
     return user
   }
 
-  public async update({ request, params, auth, response }: HttpContextContract) {
+  public async update({ request, params, auth, response, bouncer }: HttpContextContract) {
     const user = await User.findByOrFail('id', params.id)
     const data = await request.validate(UpdateUserValidator)
 
-    if (user.id !== auth.user!.id && auth.user?.roles[0].slug !== 'admin') {
+    if (user.id !== auth.user!.id && !(await bouncer.allows('Can', 'users-update-all'))) {
       return response
         .status(401)
         .send({ error: { message: 'You can only update your own account' } })
@@ -71,14 +71,14 @@ export default class UsersController {
     return user
   }
 
-  public async destroy({ params, response, auth }: HttpContextContract) {
+  public async destroy({ params, response, auth, bouncer }: HttpContextContract) {
     const user = await User.findBy('id', params.id)
 
     if (!user) {
       return response.status(404).send({ error: { message: 'User not found' } })
     }
 
-    if (user.id !== auth.user!.id && auth.user?.roles[0].slug !== 'admin') {
+    if (user.id !== auth.user!.id && !(await bouncer.allows('Can', 'users-destroy-all'))) {
       return response
         .status(401)
         .send({ error: { message: 'You can only delete your own account' } })
