@@ -7,8 +7,8 @@ export default class RoleSeeder extends BaseSeeder {
     if (roles.length === 0) {
       await Role.createMany([
         {
-          name: 'user',
-          slug: 'user',
+          name: 'player',
+          slug: 'player',
         },
         {
           name: 'admin',

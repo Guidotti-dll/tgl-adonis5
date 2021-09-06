@@ -18,7 +18,7 @@ export default class UsersController {
     try {
       const data = await request.validate(StoreUserValidator)
       const user = await User.create(data)
-      const role = await Role.findBy('slug', 'user')
+      const role = await Role.findBy('slug', 'player')
       if (role) {
         await user.related('roles').attach([role.id])
       }
