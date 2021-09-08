@@ -43,6 +43,14 @@ export default class PermissionSeeder extends BaseSeeder {
           slug: 'roles-update',
         },
         {
+          name: 'attachRole',
+          slug: 'roles-attach',
+        },
+        {
+          name: 'detachRole',
+          slug: 'roles-detach',
+        },
+        {
           name: 'destroyRole',
           slug: 'roles-destroy',
         },
