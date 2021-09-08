@@ -6,6 +6,7 @@
     "build": "node ace build --production",
     "start": "node server.js",
     "docker:migrate": "docker exec -it tgl node ace migration:run",
+    "docker:scheduler": "docker exec -it tgl node ace scheduler:run",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
@@ -32,6 +33,7 @@
     "@adonisjs/redis": "^7.0.8",
     "@adonisjs/repl": "^3.0.0",
     "@adonisjs/view": "^6.0.8",
+    "adonis5-scheduler": "^2.0.2",
     "crypto": "^1.0.1",
     "luxon": "^2.0.2",
     "moment": "^2.29.1",
