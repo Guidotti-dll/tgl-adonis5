@@ -40,6 +40,14 @@ services:
     command: node ace db:seed
     depends_on:
       - migration
+  scheduler:
+    build: .
+    # image: scheduler
+    networks:
+      - adonis5
+    command: node ace scheduler:run
+    depends_on:
+      - api
 
   postgres:
     image: postgres
