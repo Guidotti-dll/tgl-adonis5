@@ -26,7 +26,7 @@ export default class BetsController {
     const { page, perPage } = request.qs()
     let bets: ModelPaginatorContract<Bet>
     if (await bouncer.allows('Can', 'bets-index-all')) {
-      bets = await Bet.query().paginate(page, perPage)
+      bets = await Bet.query().preload('game').paginate(page, perPage)
     } else {
       bets = await Bet.query()
         .where('user_id', auth.user!.id)
@@ -69,13 +69,13 @@ export default class BetsController {
         numbers: bet.numbers.join(','),
       }
 
-      const { user_id, created_at, updated_at, price, numbers, game_id } = await Bet.create(
+      const { userId, created_at, updated_at, price, numbers, game_id } = await Bet.create(
         data,
         trx
       )
 
       newBets.push({
-        user_id,
+        user_id: userId,
         game_id,
         created_at,
         updated_at,
@@ -117,10 +117,11 @@ export default class BetsController {
       return response.status(404).send({ error: { message: 'Bet not found' } })
     }
 
-    if (auth.user!.id !== bet.user_id && !(await bouncer.allows('Can', 'bets-show-all'))) {
+    if (auth.user!.id !== bet.userId && !(await bouncer.allows('Can', 'bets-show-all'))) {
       return response.status(401).send({ error: { message: 'You can only show your own bet' } })
     }
 
+    await bet.load('game')
     return bet
   }
 
