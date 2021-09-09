@@ -5,7 +5,15 @@ export default class UpdatePermissionValidator {
   constructor(protected ctx: HttpContextContract) {}
   public schema = schema.create({
     name: schema.string.optional(),
-    slug: schema.string.optional({}, [rules.unique({ table: 'permissions', column: 'slug' })]),
+    slug: schema.string.optional({}, [
+      rules.unique({
+        table: 'permissions',
+        column: 'slug',
+        whereNot: {
+          id: this.ctx.params.id,
+        },
+      }),
+    ]),
   })
 
   public messages = {

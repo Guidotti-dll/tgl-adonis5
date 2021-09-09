@@ -6,7 +6,15 @@ export default class UpdateRoleValidator {
 
   public schema = schema.create({
     name: schema.string.optional(),
-    slug: schema.string.optional({}, [rules.unique({ table: 'roles', column: 'slug' })]),
+    slug: schema.string.optional({}, [
+      rules.unique({
+        table: 'roles',
+        column: 'slug',
+        whereNot: {
+          id: this.ctx.params.id,
+        },
+      }),
+    ]),
     permissions: schema.array.optional([rules.minLength(1)]).members(schema.number()),
   })
 

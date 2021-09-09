@@ -9,7 +9,13 @@ export default class UpdateUserValidator {
     email: schema.string.optional({}, [
       rules.email(),
       rules.maxLength(254),
-      rules.unique({ table: 'users', column: 'email' }),
+      rules.unique({
+        table: 'users',
+        column: 'email',
+        whereNot: {
+          id: this.ctx.params.id,
+        },
+      }),
     ]),
     password: schema.string.optional({}, [
       rules.minLength(8),

@@ -5,7 +5,15 @@ export default class UpdateGameValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    type: schema.string.optional({}, [rules.unique({ table: 'games', column: 'type' })]),
+    type: schema.string.optional({}, [
+      rules.unique({
+        table: 'games',
+        column: 'type',
+        whereNot: {
+          id: this.ctx.params.id,
+        },
+      }),
+    ]),
     description: schema.string.optional(),
     color: schema.string.optional({}, [
       rules.minLength(4),
