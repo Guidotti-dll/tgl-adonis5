@@ -11,7 +11,7 @@ interface UserObject {
 
 export default class SendEmailWithoutBet extends BaseTask {
   public static get schedule() {
-    return '* 9 * * 1'
+    return '0 9 * * 1'
   }
 
   public static get useLock() {
@@ -19,10 +19,16 @@ export default class SendEmailWithoutBet extends BaseTask {
   }
 
   public async handle() {
-    const users = await User.query().preload('bets')
+    const users = await User.query().preload('bets').preload('roles')
 
     const usersIdle: UserObject[] = []
-    users.forEach(({ bets, name, email }) => {
+    users.forEach(({ bets, name, email, roles, is_confirmed }) => {
+      if (!roles.some((role) => role.slug === 'player')) {
+        return
+      }
+      if (!is_confirmed) {
+        return
+      }
       if (bets.length === 0) {
         usersIdle.push({
           name,
