@@ -19,6 +19,14 @@ export default class ForgotPasswordsController {
         return response.notFound({ error: { message: 'User not found' } })
       }
 
+      if (!user.is_confirmed) {
+        return response.status(400).send({
+          error: {
+            message: 'To recover your password, you need to confirm your account, check your email',
+          },
+        })
+      }
+
       user.reset_token = crypto.randomBytes(10).toString('hex')
       user.token_created_at = new Date()
 
@@ -56,7 +64,7 @@ export default class ForgotPasswordsController {
       const user = await User.findBy('reset_token', token)
 
       if (!user) {
-        return response.notFound({ error: { message: 'User not found' } })
+        return response.status(400).send({ error: { message: 'Token invalid' } })
       }
 
       const tokenExpired = moment().subtract('2', 'days').isAfter(user.token_created_at)

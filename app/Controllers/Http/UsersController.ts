@@ -55,7 +55,12 @@ export default class UsersController {
   }
 
   public async update({ request, params, auth, response, bouncer }: HttpContextContract) {
-    const user = await User.findByOrFail('id', params.id)
+    const user = await User.findBy('id', params.id)
+
+    if (!user) {
+      return response.status(404).send({ error: { message: 'User not found' } })
+    }
+
     const data = await request.validate(UpdateUserValidator)
 
     if (user.id !== auth.user!.id && !(await bouncer.allows('Can', 'users-update-all'))) {
