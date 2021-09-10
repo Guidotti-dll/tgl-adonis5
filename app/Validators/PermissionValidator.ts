@@ -1,27 +1,24 @@
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-let method: boolean
-
 export default class PermissionValidator {
-  constructor(protected ctx: HttpContextContract) {
-    method = ctx.route?.name?.split('.')[1] === 'attach'
-  }
+  constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    permissions: method
-      ? schema.array.optional([rules.minLength(1), rules.distinct('*')]).members(
-          schema.number([
-            rules.exists({ table: 'permissions', column: 'id' }),
-            rules.unique({
-              table: 'role_permissions',
-              column: 'permission_id',
-            }),
-          ])
-        )
-      : schema.array
-          .optional([rules.minLength(1), rules.distinct('*')])
-          .members(schema.number([rules.exists({ table: 'permissions', column: 'id' })])),
+    permissions:
+      this.ctx.route?.name?.split('.')[1] === 'attach'
+        ? schema.array.optional([rules.minLength(1), rules.distinct('*')]).members(
+            schema.number([
+              rules.exists({ table: 'permissions', column: 'id' }),
+              rules.unique({
+                table: 'role_permissions',
+                column: 'permission_id',
+              }),
+            ])
+          )
+        : schema.array
+            .optional([rules.minLength(1), rules.distinct('*')])
+            .members(schema.number([rules.exists({ table: 'permissions', column: 'id' })])),
   })
 
   public messages = {

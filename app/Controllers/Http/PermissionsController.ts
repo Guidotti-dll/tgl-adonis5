@@ -41,6 +41,8 @@ export default class PermissionsController {
       permission.merge(data)
 
       await permission.save()
+
+      return permission
     } catch (error) {
       response.badRequest({ error: { message: error.message } })
     }
