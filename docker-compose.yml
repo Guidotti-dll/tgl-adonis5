@@ -40,9 +40,10 @@ services:
     command: node ace db:seed
     depends_on:
       - migration
+
   scheduler:
     build: .
-    # image: scheduler
+    image: scheduler
     networks:
       - adonis5
     command: node ace scheduler:run

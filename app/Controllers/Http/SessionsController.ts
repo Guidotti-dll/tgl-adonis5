@@ -9,6 +9,12 @@ export default class SessionsController {
       const { user, token } = await auth
         .use('api')
         .attempt(email, password, { expiresIn: '60mins' })
+
+      if (!user.is_confirmed) {
+        await auth.use('api').revoke()
+        return response.badRequest({ error: { message: 'To login you must confirm your account' } })
+      }
+
       return { user, token }
     } catch {
       return response.badRequest({ error: { message: 'Invalid credentials' } })
