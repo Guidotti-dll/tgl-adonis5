@@ -1,4 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { LucidModel, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
+import Permission from 'App/Models/Permission'
 import Role from 'App/Models/Role'
 import PermissionValidator from 'App/Validators/PermissionValidator'
 import StoreRoleValidator from 'App/Validators/StoreRoleValidator'
@@ -21,14 +23,19 @@ export default class RolesController {
       }
       await role!.load('permissions')
       if (permissions && permissions.length > 0) {
-        permissions.forEach(async (permission) => {
+        let rolePermissions = role.permissions
+        for (const permission of permissions) {
           const has = role.permissions.some((rolePermission) => rolePermission.id === permission)
           if (!has) {
             await role!.related('permissions').attach([permission])
+            const newPermission = await Permission.findBy('id', permission)
+            if (newPermission) {
+              rolePermissions.push(newPermission)
+            }
           }
-        })
+        }
 
-        await role!.load('permissions')
+        role.permissions = rolePermissions
         return role
       }
     } catch (error) {
@@ -45,13 +52,18 @@ export default class RolesController {
       }
       await role.load('permissions')
       if (permissions && permissions.length > 0) {
-        permissions.forEach(async (permission) => {
+        let rolePermissions = role.permissions
+        for (const permission of permissions) {
           const has = role.permissions.some((rolePermission) => rolePermission.id === permission)
           if (has) {
             await role!.related('permissions').detach([permission])
+            rolePermissions = rolePermissions.filter(
+              (_permission) => _permission.id !== permission
+            ) as ManyToMany<typeof Permission, LucidModel>
           }
-        })
-        await role.load('permissions')
+        }
+
+        role.permissions = rolePermissions
         return role
       }
     } catch (error) {

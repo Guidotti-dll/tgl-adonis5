@@ -13,6 +13,9 @@ export default class PermissionValidator {
               rules.unique({
                 table: 'role_permissions',
                 column: 'permission_id',
+                where: {
+                  role_id: this.ctx.params.id,
+                },
               }),
             ])
           )
