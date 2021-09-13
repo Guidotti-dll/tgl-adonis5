@@ -7,6 +7,7 @@
     "start": "node server.js",
     "docker:migrate": "docker exec -it tgl node ace migration:run",
     "docker:scheduler": "docker exec -it tgl node ace scheduler:run",
+    "docker:seed": "docker exec -it tgl node ace db:seed",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
