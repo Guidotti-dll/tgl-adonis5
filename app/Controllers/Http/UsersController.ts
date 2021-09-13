@@ -1,8 +1,10 @@
 import Mail from '@ioc:Adonis/Addons/Mail'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { LucidModel, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Role from 'App/Models/Role'
 import User from 'App/Models/User'
+import RoleValidator from 'App/Validators/RoleValidator'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 
@@ -12,6 +14,65 @@ export default class UsersController {
     const users = await User.query().paginate(page, perPage)
 
     return users
+  }
+
+  public async attach({ request, response, params }: HttpContextContract) {
+    const { roles } = await request.validate(RoleValidator)
+    try {
+      const user = await User.findBy('id', params.id)
+      if (!user) {
+        return response.status(404).send({ error: { message: 'User not found' } })
+      }
+      await user!.load('roles')
+
+      if (roles && roles.length > 0) {
+        let userRoles = user.roles
+        for (const role of roles) {
+          const has = user.roles.some((userRole) => userRole.id === role)
+          if (!has) {
+            await user!.related('roles').attach([role])
+            const newPermission = await Role.findBy('id', role)
+            if (newPermission) {
+              userRoles.push(newPermission)
+            }
+          }
+        }
+
+        user.roles = userRoles
+        return user
+      }
+    } catch (error) {
+      response.badRequest({ error: { message: error.message } })
+    }
+  }
+
+  public async detach({ request, response, params }: HttpContextContract) {
+    const { roles } = await request.validate(RoleValidator)
+    try {
+      const user = await User.findBy('id', params.id)
+      if (!user) {
+        return response.status(404).send({ error: { message: 'User not found' } })
+      }
+      await user.load('roles')
+      if (roles && roles.length > 0) {
+        let userRoles = user.roles
+        for (const role of roles) {
+          const has = user.roles.some((userPermission) => userPermission.id === role)
+          if (has) {
+            await user!.related('roles').detach([role])
+            userRoles = userRoles.filter((_role) => _role.id !== role) as ManyToMany<
+              typeof Role,
+              LucidModel
+            >
+          }
+        }
+
+        user.roles = userRoles
+        return user
+      }
+    } catch (error) {
+      response.badRequest({ error: { message: error.message } })
+    }
   }
 
   public async store({ request, response }: HttpContextContract) {
@@ -50,6 +111,8 @@ export default class UsersController {
     if (user.id !== auth.user!.id && !(await bouncer.allows('Can', 'users-show-all'))) {
       return response.status(401).send({ error: { message: 'You can only show your own account' } })
     }
+    await user.load('roles')
+    await user.load('bets')
 
     return user
   }

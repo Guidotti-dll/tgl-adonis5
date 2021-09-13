@@ -31,6 +31,8 @@ Route.post('sessions', 'SessionsController.store')
 Route.group(() => {
   Route.resource('users', 'UsersController').apiOnly().except(['store'])
   Route.resource('roles', 'RolesController').apiOnly()
+  Route.put('users/:id/attach', 'UsersController.attach').as('users.attach')
+  Route.put('users/:id/detach', 'UsersController.detach').as('users.detach')
   Route.put('roles/:id/attach', 'RolesController.attach').as('roles.attach')
   Route.put('roles/:id/detach', 'RolesController.detach').as('roles.detach')
   Route.resource('permissions', 'PermissionsController').apiOnly()

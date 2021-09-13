@@ -134,6 +134,14 @@ export default class PermissionSeeder extends BaseSeeder {
           name: 'destroyAllUsers',
           slug: 'users-destroy-all',
         },
+        {
+          name: 'attachUser',
+          slug: 'users-attach',
+        },
+        {
+          name: 'detachUser',
+          slug: 'users-detach',
+        },
       ])
     }
   }
