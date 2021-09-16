@@ -6,15 +6,16 @@ import supertest from 'supertest'
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
 test.group('Create User', () => {
-  test('ensure user password gets hashed during save', async (assert) => {
-    const user = await supertest(BASE_URL).post('/users').send({
+  test('create user and return your id', async (assert) => {
+    const { body } = await supertest(BASE_URL).post('/users').send({
       name: 'Lucas',
       email: 'lucas@email.com',
       password: '12345678',
+      password_confirmation: '12345678',
     })
 
-    console.log('aaa', user)
+    console.log(body)
 
-    // assert.notEqual(user.body, 'secret')
+    assert.exists(body.id)
   })
 })

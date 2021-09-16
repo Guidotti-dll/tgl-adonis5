@@ -11,7 +11,7 @@
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
-    "pretest": "NODE_ENV=testing node ace migration:run",
+    "pretest": "NODE_ENV=testing node ace migration:run &&  NODE_ENV=testing  node ace db:seed",
     "test": "node -r @adonisjs/assembler/build/register japaFile.ts",
     "posttest": "NODE_ENV=testing node ace migration:rollback"
   },
