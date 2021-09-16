@@ -8,6 +8,7 @@
     "docker:migrate": "docker exec -it tgl node ace migration:run",
     "docker:scheduler": "docker exec -it tgl node ace scheduler:run",
     "docker:seed": "docker exec -it tgl node ace db:seed",
+    "test": "node -r @adonisjs/assembler/build/register japaFile.ts",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
@@ -19,6 +20,9 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-adonis": "^1.3.3",
     "eslint-plugin-prettier": "^3.4.1",
+    "execa": "^5.1.1",
+    "get-port": "^5.1.1",
+    "japa": "^3.1.1",
     "pino-pretty": "^6.0.0",
     "prettier": "^2.3.2",
     "typescript": "~4.2",
