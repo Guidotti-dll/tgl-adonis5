@@ -5,6 +5,7 @@
  * file.
  */
 
+import Application from '@ioc:Adonis/Core/Application'
 import Env from '@ioc:Adonis/Core/Env'
 import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
 
@@ -19,7 +20,7 @@ const databaseConfig: DatabaseConfig = {
   | file.
   |
   */
-  connection: Env.get('DB_CONNECTION'),
+  connection: process.env.NODE_ENV === 'testing' ? 'sqlite' : Env.get('DB_CONNECTION'),
 
   connections: {
     /*
@@ -50,6 +51,19 @@ const databaseConfig: DatabaseConfig = {
       seeders: {
         paths: ['./database/seeders/MainSeeder'],
       },
+    },
+
+    sqlite: {
+      client: 'sqlite',
+      connection: {
+        filename: Application.tmpPath('db.sqlite3'),
+      },
+      migrations: {
+        naturalSort: true,
+      },
+      useNullAsDefault: true,
+      healthCheck: false,
+      debug: false,
     },
   },
 }
