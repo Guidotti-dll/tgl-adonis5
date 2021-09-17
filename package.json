@@ -8,6 +8,7 @@
     "docker:migrate": "docker exec -it tgl node ace migration:run",
     "docker:scheduler": "docker exec -it tgl node ace scheduler:run",
     "docker:seed": "docker exec -it tgl node ace db:seed",
+    "docker:test": "docker exec -it tgl yarn test",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",

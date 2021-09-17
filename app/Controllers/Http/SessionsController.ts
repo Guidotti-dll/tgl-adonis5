@@ -17,7 +17,7 @@ export default class SessionsController {
 
       return { user, token }
     } catch {
-      return response.badRequest({ error: { message: 'Invalid credentials' } })
+      return response.status(401).send({ error: { message: 'Invalid credentials' } })
     }
   }
 

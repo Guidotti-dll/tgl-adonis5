@@ -1,3 +1,4 @@
+import { UserFactory } from 'Database/factories'
 import test from 'japa'
 import User from 'App/Models/User'
 import supertest from 'supertest'
@@ -30,5 +31,13 @@ test.group('Create User', (group) => {
       password_confirmation: '12345678',
     })
     assert.equal(status, 400)
+  })
+
+  test('comfirm account', async (assert) => {
+    const user = await UserFactory.create()
+
+    const { status } = await supertest(BASE_URL).get(`/confirm-account/${user.id}`)
+
+    assert.equal(status, 200)
   })
 })
