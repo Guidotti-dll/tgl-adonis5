@@ -6,7 +6,7 @@ import { DestroyUsers } from './utils/destroyUsers'
 const BASE_URL = process.env.APP_URL
 test.group('Create User', (group) => {
   group.beforeEach(async () => {
-    DestroyUsers()
+    await DestroyUsers()
   })
 
   test('create user and return your id', async (assert) => {

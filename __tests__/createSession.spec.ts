@@ -6,7 +6,7 @@ const BASE_URL = process.env.APP_URL
 
 test.group('Create Session', (group) => {
   group.beforeEach(async () => {
-    DestroyUsers()
+    await DestroyUsers()
   })
 
   test('create user,init session and return token', async (assert) => {
