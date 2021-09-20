@@ -64,6 +64,9 @@ const databaseConfig: DatabaseConfig = {
       useNullAsDefault: true,
       healthCheck: false,
       debug: false,
+      seeders: {
+        paths: ['./database/seeders/MainSeeder'],
+      },
     },
   },
 }
