@@ -1,16 +1,12 @@
 import { UserFactory } from 'Database/factories'
 import test from 'japa'
-import User from 'App/Models/User'
 import supertest from 'supertest'
+import { DestroyUsers } from './utils/destroyUsers'
 
-const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
-
+const BASE_URL = process.env.APP_URL
 test.group('Create User', (group) => {
   group.beforeEach(async () => {
-    const users = await User.all()
-    users.forEach(async (user) => {
-      if (user.id !== 1) await user.delete()
-    })
+    DestroyUsers()
   })
 
   test('create user and return your id', async (assert) => {
